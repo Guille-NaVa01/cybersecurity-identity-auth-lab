@@ -60,6 +60,9 @@ services:
   api:
     build: ./fastapi
     container_name: ldap-oauth-api
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     ports:
       - "8000:8000"
     environment:
@@ -73,6 +76,9 @@ services:
   books-api:
     build: ../backend-dashboard
     container_name: books-dashboard-api
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     ports:
       - "8001:8001"
     environment:

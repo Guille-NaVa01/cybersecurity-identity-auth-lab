@@ -1,5 +1,17 @@
 This repository contains the identity infrastructure for the lab. It deploys OpenLDAP as the user directory, Keycloak as the Identity Provider (IdP) configured with the OAuth2 Resource Owner Password Credentials (ROPC) flow, and PostgreSQL for realm persistence.
 
+This repository is part of a complete project that requires the following repositories:
+
+frontend: https://github.com/Guille-NaVa01/cybersecurity-books-frontend.git
+
+backend: https://github.com/Guille-NaVa01/cybersecurity-books-api.git
+
+auth : https://github.com/Guille-NaVa01/cybersecurity-identity-auth-lab.git
+
+ddos : https://github.com/Guille-NaVa01/cybersecurity-ddos-load-tester.git
+
+To run the complete project, you must download/clone all three repositories.
+
 # LDAP + Keycloak + OAuth 2.0 / OIDC Lab
 
 Complete Docker lab: OpenLDAP + phpLDAPadmin + Keycloak + PostgreSQL + FastAPI.
@@ -138,6 +150,22 @@ file (with mappers) actually got imported, and check with:
 docker exec keycloak cat /opt/keycloak/data/import/cybersecurity-realm.json \
   | python3 -c "import sys,json;print(json.load(sys.stdin)['components']['org.keycloak.storage.UserStorageProvider'][0]['subComponents'])"
 ```
-This should list four mappers, not an empty object.
+## Protección Perimetral con Fail2Ban y Seguridad LDAP (TLS)
+
+### 1. Protección HTTP Flood (FastAPI / Books API)
+Los contenedores de API cuentan con **Fail2Ban** integrado con la capacidad `NET_ADMIN`:
+- Monitorea `/var/log/app/access.log`.
+- Jail: `http-flood` (puertos `8000` y `8001`).
+- Umbral: 60 peticiones en 10 segundos antes de aplicar bloqueo automático vía `iptables`.
+
+### 2. Protección a Nivel de Puerto LDAP con TLS (LDAPS :636 / :389)
+- El servicio de directorio OpenLDAP soporta conexiones seguras mediante TLS en el puerto **636 (LDAPS)** y STARTTLS en el puerto **389**.
+- Las conexiones directas al puerto TLS están protegidas contra ataques de denegación de servicio por saturación de socket y handshake SSL.
+
+Para consultar el estado de Fail2Ban:
+```bash
+docker exec ldap-oauth-api fail2ban-client status http-flood
+docker exec books-dashboard-api fail2ban-client status http-flood
+```
 
 
