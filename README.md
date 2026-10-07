@@ -1,3 +1,5 @@
+This repository contains the identity infrastructure for the lab. It deploys OpenLDAP as the user directory, Keycloak as the Identity Provider (IdP) configured with the OAuth2 Resource Owner Password Credentials (ROPC) flow, and PostgreSQL for realm persistence.
+
 # LDAP + Keycloak + OAuth 2.0 / OIDC Lab
 
 Complete Docker lab: OpenLDAP + phpLDAPadmin + Keycloak + PostgreSQL + FastAPI.
