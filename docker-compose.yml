@@ -12,7 +12,7 @@ services:
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap/slapd.d
-    networks: [auth-network]
+    networks: [ auth-network ]
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest
@@ -22,8 +22,8 @@ services:
       PHPLDAPADMIN_HTTPS: "false"
     ports:
       - "8080:80"
-    depends_on: [openldap]
-    networks: [auth-network]
+    depends_on: [ openldap ]
+    networks: [ auth-network ]
 
   postgres:
     image: postgres:16-alpine
@@ -34,7 +34,7 @@ services:
       POSTGRES_PASSWORD: keycloakpassword
     volumes:
       - keycloak_db:/var/lib/postgresql/data
-    networks: [auth-network]
+    networks: [ auth-network ]
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.7.4
@@ -54,8 +54,8 @@ services:
       - "8081:8080"
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import:ro
-    depends_on: [postgres, openldap]
-    networks: [auth-network]
+    depends_on: [ postgres, openldap ]
+    networks: [ auth-network ]
 
   api:
     build: ./fastapi
@@ -70,11 +70,11 @@ services:
       KEYCLOAK_PUBLIC: http://localhost:8081
       KEYCLOAK_REALM: cybersecurity
       KEYCLOAK_CLIENT_ID: fastapi-api
-    depends_on: [keycloak]
-    networks: [auth-network]
+    depends_on: [ keycloak ]
+    networks: [ auth-network ]
 
   books-api:
-    build: ../backend-dashboard
+    build: ../cybersecurity-books-api
     container_name: books-dashboard-api
     cap_add:
       - NET_ADMIN
@@ -86,8 +86,8 @@ services:
       KEYCLOAK_PUBLIC: http://localhost:8081
       KEYCLOAK_REALM: cybersecurity
       KEYCLOAK_CLIENT_ID: fastapi-api
-    depends_on: [keycloak]
-    networks: [auth-network]
+    depends_on: [ keycloak ]
+    networks: [ auth-network ]
 
 volumes:
   ldap_data:
